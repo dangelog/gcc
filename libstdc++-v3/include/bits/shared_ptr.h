@@ -426,6 +426,22 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     shared_ptr(unique_ptr<_Tp, _Del>) ->  shared_ptr<_Tp>;
 #endif
 
+    namespace __detail
+    {
+    namespace __shared_ptr
+    {
+      template<typename _Tp>
+        struct _is_shared_ptr
+        : std::false_type
+        { };
+
+      template<typename _Tp>
+        struct _is_shared_ptr<std::shared_ptr<_Tp>>
+        : std::true_type
+        { };
+    }  // namespace __detail
+    }  // namespace __shared_ptr
+
   // 20.7.2.2.7 shared_ptr comparisons
 
   /// @relates shared_ptr @{
@@ -435,6 +451,16 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     _GLIBCXX_NODISCARD inline bool
     operator==(const shared_ptr<_Tp>& __a, const shared_ptr<_Up>& __b) noexcept
     { return __a.get() == __b.get(); }
+
+#ifdef __cpp_lib_mixed_smart_pointer_comparisons
+  /// Equaity operator for shared_ptr against a raw pointer
+  template<typename _Tp, typename _Up,
+           enable_if_t<!__detail::__shared_ptr::_is_shared_ptr<_Up>::value, bool> = false>
+    requires equality_comparable_with<typename shared_ptr<_Tp>::element_type*, _Up>
+    _GLIBCXX_NODISCARD inline bool
+    operator==(const shared_ptr<_Tp>& __a, const _Up& __b)
+    { return __a.get() == __b; }
+#endif
 
   /// shared_ptr comparison with nullptr
   template<typename _Tp>
@@ -448,6 +474,18 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     operator<=>(const shared_ptr<_Tp>& __a,
 		const shared_ptr<_Up>& __b) noexcept
     { return compare_three_way()(__a.get(), __b.get()); }
+
+#ifdef __cpp_lib_mixed_smart_pointer_comparisons
+  template<typename _Tp, typename _Up,
+           enable_if_t<!__detail::__shared_ptr::_is_shared_ptr<_Up>::value, bool> = false>
+    requires three_way_comparable_with<typename shared_ptr<_Tp>::element_type*, _Up>
+    inline
+    compare_three_way_result_t<typename shared_ptr<_Tp>::element_type*,
+                               _Up>
+      operator<=>(const shared_ptr<_Tp>& __a,
+                  const _Up& __b) noexcept
+      { return compare_three_way()(__a.get(), __b); }
+#endif
 
   template<typename _Tp>
     inline strong_ordering

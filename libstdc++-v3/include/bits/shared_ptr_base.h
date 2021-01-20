@@ -58,6 +58,10 @@
 # include <compare>
 #endif
 
+#if __cpp_impl_three_way_comparison >= 201907L && __cpp_lib_concepts
+# define __cpp_lib_mixed_smart_pointer_comparisons 202101
+#endif
+
 namespace std _GLIBCXX_VISIBILITY(default)
 {
 _GLIBCXX_BEGIN_NAMESPACE_VERSION

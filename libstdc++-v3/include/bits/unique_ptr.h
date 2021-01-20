@@ -41,6 +41,9 @@
 # include <compare>
 # include <ostream>
 #endif
+#if __cpp_impl_three_way_comparison >= 201907L && __cpp_lib_concepts
+# define __cpp_lib_mixed_smart_pointer_comparisons 202101
+#endif
 
 namespace std _GLIBCXX_VISIBILITY(default)
 {
@@ -724,6 +727,22 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
       unique_ptr& operator=(const unique_ptr&) = delete;
     };
 
+  namespace __detail
+  {
+  namespace __unique_ptr
+  {
+    template<typename _Tp>
+      struct _is_unique_ptr
+      : std::false_type
+      { };
+
+    template<typename _Tp, typename _Del>
+      struct _is_unique_ptr<std::unique_ptr<_Tp, _Del>>
+      : std::true_type
+      { };
+  }  // namespace __detail
+  }  // namespace __unique_ptr
+
   /// @relates unique_ptr @{
 
   /// Swap overload for unique_ptr
@@ -753,6 +772,18 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     operator==(const unique_ptr<_Tp, _Dp>& __x,
 	       const unique_ptr<_Up, _Ep>& __y)
     { return __x.get() == __y.get(); }
+
+#ifdef __cpp_lib_mixed_smart_pointer_comparisons
+  /// Equality operator for mixed unique_ptr comparison against raw pointer
+  template<typename _Tp, typename _Dp,
+           typename _Up,
+           enable_if_t<!__detail::__unique_ptr::_is_unique_ptr<_Up>::value, bool> = false>
+    requires equality_comparable_with<typename unique_ptr<_Tp, _Dp>::pointer, _Up>
+    _GLIBCXX_NODISCARD inline bool
+    operator==(const unique_ptr<_Tp, _Dp>& __x,
+               const _Up& __y)
+    { return __x.get() == __y; }
+#endif
 
   /// unique_ptr comparison with nullptr
   template<typename _Tp, typename _Dp>
@@ -895,6 +926,18 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     operator<=>(const unique_ptr<_Tp, _Dp>& __x,
 		const unique_ptr<_Up, _Ep>& __y)
     { return compare_three_way()(__x.get(), __y.get()); }
+
+#ifdef __cpp_lib_mixed_smart_pointer_comparisons
+  template<typename _Tp, typename _Dp, typename _Up,
+           enable_if_t<!__detail::__unique_ptr::_is_unique_ptr<_Up>::value, bool> = false>
+    requires three_way_comparable_with<typename unique_ptr<_Tp, _Dp>::pointer, _Up>
+    inline
+    compare_three_way_result_t<typename unique_ptr<_Tp, _Dp>::pointer,
+                               _Up>
+    operator<=>(const unique_ptr<_Tp, _Dp>& __x,
+                const _Up& __y)
+    { return compare_three_way()(__x.get(), __y); }
+#endif
 
   template<typename _Tp, typename _Dp>
     requires three_way_comparable<typename unique_ptr<_Tp, _Dp>::pointer>
