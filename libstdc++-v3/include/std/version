@@ -49,6 +49,10 @@
 #define __cpp_lib_is_null_pointer 201309
 #define __cpp_lib_result_of_sfinae 201210
 
+// While technically a C++2b feature, enable it for C++11.
+// This way we'll more likely find issues...
+#define __cpp_lib_default_template_type_for_algorithm_values 202109L
+
 #if _GLIBCXX_HOSTED
 # define __cpp_lib_allocator_traits_is_always_equal 201411
 # define __cpp_lib_shared_ptr_arrays 201611L

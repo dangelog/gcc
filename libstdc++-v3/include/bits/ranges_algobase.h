@@ -515,7 +515,13 @@ namespace ranges
 
   struct __fill_n_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<typename _Out,
+             typename _Tp = iter_value_t<_Out>>
+      requires output_iterator<_Out, const _Tp&>
+#else
     template<typename _Tp, output_iterator<const _Tp&> _Out>
+#endif
       constexpr _Out
       operator()(_Out __first, iter_difference_t<_Out> __n,
 		 const _Tp& __value) const
@@ -554,8 +560,15 @@ namespace ranges
 
   struct __fill_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<typename _Out,
+             sentinel_for<_Out> _Sent,
+             typename _Tp = iter_value_t<_Out>>
+      requires output_iterator<_Out, const _Tp&>
+#else
     template<typename _Tp,
 	     output_iterator<const _Tp&> _Out, sentinel_for<_Out> _Sent>
+#endif
       constexpr _Out
       operator()(_Out __first, _Sent __last, const _Tp& __value) const
       {
@@ -581,7 +594,13 @@ namespace ranges
 	  }
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<typename _Range,
+             typename _Tp = range_value_t<_Range>>
+      requires output_range<_Range, const _Tp&>
+#else
     template<typename _Tp, output_range<const _Tp&> _Range>
+#endif
       constexpr borrowed_iterator_t<_Range>
       operator()(_Range&& __r, const _Tp& __value) const
       {

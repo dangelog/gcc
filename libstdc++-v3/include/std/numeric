@@ -57,6 +57,12 @@
 
 #pragma GCC system_header
 
+#if __cplusplus > 201103L
+// While technically a C++2b feature, enable it for C++11.
+// This way we'll more likely find issues...
+#define __cpp_lib_default_template_type_for_algorithm_values 202109L
+#endif
+
 #include <bits/c++config.h>
 #include <bits/stl_iterator_base_types.h>
 #include <bits/stl_numeric.h>
@@ -272,7 +278,15 @@ namespace __detail
    *  for `std::accumulate`, but for other operations (such as floating point
    *  arithmetic) the result can be different.
    */
-  template<typename _InputIterator, typename _Tp, typename _BinaryOperation>
+  template<typename _InputIterator,
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           typename _BinaryOperation,
+           typename _Tp = invoke_result_t<_BinaryOperation &,
+                                          typename iterator_traits<_InputIterator>::reference,
+                                          typename iterator_traits<_InputIterator>::reference>>
+#else
+           typename _Tp, typename _BinaryOperation>
+#endif
     _GLIBCXX20_CONSTEXPR
     _Tp
     reduce(_InputIterator __first, _InputIterator __last, _Tp __init,
@@ -310,7 +324,13 @@ namespace __detail
    *  Reduce the values in the range `[first,last)` using addition.
    *  Equivalent to calling `std::reduce(first, last, init, std::plus<>())`.
    */
-  template<typename _InputIterator, typename _Tp>
+  template<typename _InputIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = invoke_result_t<add_lvalue_reference_t<plus<>>,
+                             typename iterator_traits<_InputIterator>::reference,
+                             typename iterator_traits<_InputIterator>::reference>
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _Tp
     reduce(_InputIterator __first, _InputIterator __last, _Tp __init)
@@ -354,8 +374,22 @@ namespace __detail
    *  The range beginning at `first2` must contain at least `last1-first1`
    *  elements.
    */
-  template<typename _InputIterator1, typename _InputIterator2, typename _Tp,
-	   typename _BinaryOperation1, typename _BinaryOperation2>
+  template<typename _InputIterator1, typename _InputIterator2,
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           typename _BinaryOperation1, typename _BinaryOperation2,
+           typename _Tp = invoke_result_t<_BinaryOperation1 &,
+                                          invoke_result_t<_BinaryOperation2 &,
+                                                          typename iterator_traits<_InputIterator1>::reference,
+                                                          typename iterator_traits<_InputIterator2>::reference>,
+                                          invoke_result_t<_BinaryOperation2 &,
+                                                          typename iterator_traits<_InputIterator1>::reference,
+                                                          typename iterator_traits<_InputIterator2>::reference>
+                                         >
+#else
+           typename _Tp,
+           typename _BinaryOperation1, typename _BinaryOperation2
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     _Tp
     transform_reduce(_InputIterator1 __first1, _InputIterator1 __last1,
@@ -398,7 +432,18 @@ namespace __detail
    *  The range beginning at `first2` must contain at least `last1-first1`
    *  elements.
    */
-  template<typename _InputIterator1, typename _InputIterator2, typename _Tp>
+  template<typename _InputIterator1, typename _InputIterator2, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+          = invoke_result_t<plus<>,
+                            invoke_result_t<add_lvalue_reference_t<multiplies<>>,
+                                            typename iterator_traits<_InputIterator1>::reference,
+                                            typename iterator_traits<_InputIterator2>::reference>,
+                            invoke_result_t<add_lvalue_reference_t<multiplies<>>,
+                                            typename iterator_traits<_InputIterator1>::reference,
+                                            typename iterator_traits<_InputIterator2>::reference>
+                           >
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _Tp
     transform_reduce(_InputIterator1 __first1, _InputIterator1 __last1,
@@ -423,8 +468,20 @@ namespace __detail
    *  use `binary_op` to reduce the values returned by `unary_op`
    *  to a single value of type `T`.
    */
-  template<typename _InputIterator, typename _Tp,
-	   typename _BinaryOperation, typename _UnaryOperation>
+  template<typename _InputIterator,
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           typename _BinaryOperation, typename _UnaryOperation,
+           typename _Tp = invoke_result_t<_BinaryOperation &,
+                                          invoke_result_t<_UnaryOperation &,
+                                                          typename iterator_traits<_InputIterator>::reference>,
+                                          invoke_result_t<_UnaryOperation &,
+                                                          typename iterator_traits<_InputIterator>::reference>
+                                          >
+#else
+           typename _Tp,
+           typename _BinaryOperation, typename _UnaryOperation
+#endif
+          >
     _GLIBCXX20_CONSTEXPR
     _Tp
     transform_reduce(_InputIterator __first, _InputIterator __last, _Tp __init,
@@ -466,8 +523,11 @@ namespace __detail
    *  of the output range is the sum of the first N-1 input elements,
    *  so the Nth input element is not included.
    */
-  template<typename _InputIterator, typename _OutputIterator, typename _Tp,
-	   typename _BinaryOperation>
+  template<typename _InputIterator, typename _OutputIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_OutputIterator>::value_type
+#endif
+           , typename _BinaryOperation>
     _GLIBCXX20_CONSTEXPR
     _OutputIterator
     exclusive_scan(_InputIterator __first, _InputIterator __last,
@@ -501,7 +561,11 @@ namespace __detail
    *  of the output range is the sum of the first N-1 input elements,
    *  so the Nth input element is not included.
    */
-  template<typename _InputIterator, typename _OutputIterator, typename _Tp>
+  template<typename _InputIterator, typename _OutputIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_OutputIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _OutputIterator
     exclusive_scan(_InputIterator __first, _InputIterator __last,
@@ -530,7 +594,11 @@ namespace __detail
    *  so the Nth input element is included.
    */
   template<typename _InputIterator, typename _OutputIterator,
-	   typename _BinaryOperation, typename _Tp>
+           typename _BinaryOperation, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_OutputIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     _OutputIterator
     inclusive_scan(_InputIterator __first, _InputIterator __last,
@@ -619,8 +687,11 @@ namespace __detail
    *  of the output range is the sum of the first N-1 input elements,
    *  so the Nth input element is not included.
    */
-  template<typename _InputIterator, typename _OutputIterator, typename _Tp,
-	   typename _BinaryOperation, typename _UnaryOperation>
+  template<typename _InputIterator, typename _OutputIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_OutputIterator>::value_type
+#endif
+           , typename _BinaryOperation, typename _UnaryOperation>
     _GLIBCXX20_CONSTEXPR
     _OutputIterator
     transform_exclusive_scan(_InputIterator __first, _InputIterator __last,
@@ -659,7 +730,11 @@ namespace __detail
    *  so the Nth input element is included.
    */
   template<typename _InputIterator, typename _OutputIterator,
-	   typename _BinaryOperation, typename _UnaryOperation, typename _Tp>
+           typename _BinaryOperation, typename _UnaryOperation, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_OutputIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     _OutputIterator
     transform_inclusive_scan(_InputIterator __first, _InputIterator __last,

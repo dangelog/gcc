@@ -45,9 +45,9 @@ test01()
   std::lcm<const int&, const int&>(0.1, 0.1);   // { dg-error "from here" }
 }
 
-// { dg-error "must be integers" "" { target *-*-* } 183 }
-// { dg-error "must be integers" "" { target *-*-* } 184 }
-// { dg-error "must not be bool" "" { target *-*-* } 185 }
-// { dg-error "must not be bool" "" { target *-*-* } 186 }
+// { dg-error "must be integers" "" { target *-*-* } 189 }
+// { dg-error "must be integers" "" { target *-*-* } 190 }
+// { dg-error "must not be bool" "" { target *-*-* } 191 }
+// { dg-error "must not be bool" "" { target *-*-* } 192 }
 // { dg-prune-output "deleted function" }
 // { dg-prune-output "incomplete type .*make_unsigned" }

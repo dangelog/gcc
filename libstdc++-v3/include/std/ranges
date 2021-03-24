@@ -34,6 +34,10 @@
 
 #pragma GCC system_header
 
+// While technically a C++2b feature, enable it for C++11.
+// This way we'll more likely find issues...
+#define __cpp_lib_default_template_type_for_algorithm_values 202109L
+
 #include <concepts>
 
 #if __cpp_lib_concepts

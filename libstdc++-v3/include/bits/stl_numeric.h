@@ -82,7 +82,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *  @return  Nothing.
    *  @ingroup numeric_ops
    */
-  template<typename _ForwardIterator, typename _Tp>
+  template<typename _ForwardIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     void
     iota(_ForwardIterator __first, _ForwardIterator __last, _Tp __value)
@@ -128,7 +132,11 @@ _GLIBCXX_BEGIN_NAMESPACE_ALGO
    *  @param  __init  Starting value to add other values to.
    *  @return  The final sum.
    */
-  template<typename _InputIterator, typename _Tp>
+  template<typename _InputIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = decltype(*declval<_InputIterator &>() + *declval<_InputIterator &>())
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _Tp
     accumulate(_InputIterator __first, _InputIterator __last, _Tp __init)
@@ -155,7 +163,13 @@ _GLIBCXX_BEGIN_NAMESPACE_ALGO
    *  @param  __binary_op  Function object to accumulate with.
    *  @return  The final sum.
    */
-  template<typename _InputIterator, typename _Tp, typename _BinaryOperation>
+  template<typename _InputIterator,
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           typename _BinaryOperation,
+           typename _Tp = decltype(declval<_BinaryOperation &>()(*declval<_InputIterator &>(), *declval<_InputIterator &>()))>
+#else
+           typename _Tp, typename _BinaryOperation>
+#endif
     _GLIBCXX20_CONSTEXPR
     inline _Tp
     accumulate(_InputIterator __first, _InputIterator __last, _Tp __init,
@@ -184,7 +198,11 @@ _GLIBCXX_BEGIN_NAMESPACE_ALGO
    *  @param  __init  Starting value to add other values to.
    *  @return  The final inner product.
    */
-  template<typename _InputIterator1, typename _InputIterator2, typename _Tp>
+  template<typename _InputIterator1, typename _InputIterator2, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = decltype((*declval<_InputIterator1 &>() * *declval<_InputIterator2 &>()) + (*declval<_InputIterator1 &>() * *declval<_InputIterator2 &>()))
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _Tp
     inner_product(_InputIterator1 __first1, _InputIterator1 __last1,
@@ -216,8 +234,20 @@ _GLIBCXX_BEGIN_NAMESPACE_ALGO
    *  @param  __binary_op2  Function object to apply to pairs of input values.
    *  @return  The final inner product.
    */
-  template<typename _InputIterator1, typename _InputIterator2, typename _Tp,
-	   typename _BinaryOperation1, typename _BinaryOperation2>
+  template<typename _InputIterator1, typename _InputIterator2,
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           typename _BinaryOperation1, typename _BinaryOperation2,
+           typename _Tp = decltype(
+             declval<_BinaryOperation1 &>()(
+               declval<_BinaryOperation2 &>()(*declval<_InputIterator1 &>(), *declval<_InputIterator2 &>()),
+               declval<_BinaryOperation2 &>()(*declval<_InputIterator1 &>(), *declval<_InputIterator2 &>())
+             )
+           )
+#else
+           typename _Tp,
+           typename _BinaryOperation1, typename _BinaryOperation2
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _Tp
     inner_product(_InputIterator1 __first1, _InputIterator1 __last1,

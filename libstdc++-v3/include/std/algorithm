@@ -57,6 +57,12 @@
 
 #pragma GCC system_header
 
+#if __cplusplus > 201103L
+// While technically a C++2b feature, enable it for C++11.
+// This way we'll more likely find issues...
+#define __cpp_lib_default_template_type_for_algorithm_values 202109L
+#endif
+
 #include <utility> // UK-300.
 #include <bits/stl_algobase.h>
 #include <bits/stl_algo.h>

@@ -613,7 +613,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *  remove_copy() is stable, so the relative order of elements that
    *  are copied is unchanged.
   */
-  template<typename _InputIterator, typename _OutputIterator, typename _Tp>
+  template<typename _InputIterator, typename _OutputIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_InputIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _OutputIterator
     remove_copy(_InputIterator __first, _InputIterator __last,
@@ -844,7 +848,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *  Elements between the end of the resulting sequence and @p __last
    *  are still present, but their value is unspecified.
   */
-  template<typename _ForwardIterator, typename _Tp>
+  template<typename _ForwardIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _ForwardIterator
     remove(_ForwardIterator __first, _ForwardIterator __last,
@@ -2005,7 +2013,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *  The comparison function should have the same effects on ordering as
    *  the function used for the initial sort.
   */
-  template<typename _ForwardIterator, typename _Tp, typename _Compare>
+  template<typename _ForwardIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           , typename _Compare>
     _GLIBCXX20_CONSTEXPR
     inline _ForwardIterator
     lower_bound(_ForwardIterator __first, _ForwardIterator __last,
@@ -2061,7 +2073,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *           or end() if no elements are greater than @p __val.
    *  @ingroup binary_search_algorithms
   */
-  template<typename _ForwardIterator, typename _Tp>
+  template<typename _ForwardIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _ForwardIterator
     upper_bound(_ForwardIterator __first, _ForwardIterator __last,
@@ -2092,7 +2108,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *  The comparison function should have the same effects on ordering as
    *  the function used for the initial sort.
   */
-  template<typename _ForwardIterator, typename _Tp, typename _Compare>
+  template<typename _ForwardIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           , typename _Compare>
     _GLIBCXX20_CONSTEXPR
     inline _ForwardIterator
     upper_bound(_ForwardIterator __first, _ForwardIterator __last,
@@ -2165,7 +2185,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *  @endcode
    *  but does not actually call those functions.
   */
-  template<typename _ForwardIterator, typename _Tp>
+  template<typename _ForwardIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline pair<_ForwardIterator, _ForwardIterator>
     equal_range(_ForwardIterator __first, _ForwardIterator __last,
@@ -2202,7 +2226,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *  @endcode
    *  but does not actually call those functions.
   */
-  template<typename _ForwardIterator, typename _Tp, typename _Compare>
+  template<typename _ForwardIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           , typename _Compare>
     _GLIBCXX20_CONSTEXPR
     inline pair<_ForwardIterator, _ForwardIterator>
     equal_range(_ForwardIterator __first, _ForwardIterator __last,
@@ -2236,7 +2264,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *  Note that this does not actually return an iterator to @p __val.  For
    *  that, use std::find or a container's specialized find member functions.
   */
-  template<typename _ForwardIterator, typename _Tp>
+  template<typename _ForwardIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     bool
     binary_search(_ForwardIterator __first, _ForwardIterator __last,
@@ -2270,7 +2302,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *  The comparison function should have the same effects on ordering as
    *  the function used for the initial sort.
   */
-  template<typename _ForwardIterator, typename _Tp, typename _Compare>
+  template<typename _ForwardIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           , typename _Compare>
     _GLIBCXX20_CONSTEXPR
     bool
     binary_search(_ForwardIterator __first, _ForwardIterator __last,
@@ -3134,7 +3170,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *  output range @p [__result,__result+(__last-__first)) replacing elements
    *  equal to @p __old_value with @p __new_value.
   */
-  template<typename _InputIterator, typename _OutputIterator, typename _Tp>
+  template<typename _InputIterator, typename _OutputIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_OutputIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _OutputIterator
     replace_copy(_InputIterator __first, _InputIterator __last,
@@ -3170,7 +3210,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *  @p __pred returns true with @p __new_value.
   */
   template<typename _InputIterator, typename _OutputIterator,
-	   typename _Predicate, typename _Tp>
+          typename _Predicate, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_OutputIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _OutputIterator
     replace_copy_if(_InputIterator __first, _InputIterator __last,
@@ -3870,7 +3914,11 @@ _GLIBCXX_BEGIN_NAMESPACE_ALGO
    *  @return   The first iterator @c i in the range @p [__first,__last)
    *  such that @c *i == @p __val, or @p __last if no such iterator exists.
   */
-  template<typename _InputIterator, typename _Tp>
+  template<typename _InputIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_InputIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _InputIterator
     find(_InputIterator __first, _InputIterator __last,
@@ -4053,7 +4101,11 @@ _GLIBCXX_BEGIN_NAMESPACE_ALGO
    *  @return   The number of iterators @c i in the range @p [__first,__last)
    *  for which @c *i == @p __value
   */
-  template<typename _InputIterator, typename _Tp>
+  template<typename _InputIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_InputIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline typename iterator_traits<_InputIterator>::difference_type
     count(_InputIterator __first, _InputIterator __last, const _Tp& __value)
@@ -4194,7 +4246,11 @@ _GLIBCXX_BEGIN_NAMESPACE_ALGO
    *  Searches the range @p [__first,__last) for @p count consecutive elements
    *  equal to @p __val.
   */
-  template<typename _ForwardIterator, typename _Integer, typename _Tp>
+  template<typename _ForwardIterator, typename _Integer, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _ForwardIterator
     search_n(_ForwardIterator __first, _ForwardIterator __last,
@@ -4228,8 +4284,11 @@ _GLIBCXX_BEGIN_NAMESPACE_ALGO
    *  Searches the range @p [__first,__last) for @p __count
    *  consecutive elements for which the predicate returns true.
   */
-  template<typename _ForwardIterator, typename _Integer, typename _Tp,
-	   typename _BinaryPredicate>
+  template<typename _ForwardIterator, typename _Integer, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           , typename _BinaryPredicate>
     _GLIBCXX20_CONSTEXPR
     inline _ForwardIterator
     search_n(_ForwardIterator __first, _ForwardIterator __last,
@@ -4350,7 +4409,11 @@ _GLIBCXX_BEGIN_NAMESPACE_ALGO
    *  For each iterator @c i in the range @p [__first,__last) if @c *i ==
    *  @p __old_value then the assignment @c *i = @p __new_value is performed.
   */
-  template<typename _ForwardIterator, typename _Tp>
+  template<typename _ForwardIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     void
     replace(_ForwardIterator __first, _ForwardIterator __last,
@@ -4383,7 +4446,11 @@ _GLIBCXX_BEGIN_NAMESPACE_ALGO
    *  For each iterator @c i in the range @p [__first,__last) if @p __pred(*i)
    *  is true then the assignment @c *i = @p __new_value is performed.
   */
-  template<typename _ForwardIterator, typename _Predicate, typename _Tp>
+  template<typename _ForwardIterator, typename _Predicate, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     void
     replace_if(_ForwardIterator __first, _ForwardIterator __last,

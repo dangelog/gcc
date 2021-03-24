@@ -398,8 +398,14 @@ namespace ranges
 {
   struct __find_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_iterator _Iter, sentinel_for<_Iter> _Sent,
+             typename _Proj = identity,
+             typename _Tp = typename projected<_Iter, _Proj>::value_type>
+#else
     template<input_iterator _Iter, sentinel_for<_Iter> _Sent, typename _Tp,
 	     typename _Proj = identity>
+#endif
       requires indirect_binary_predicate<ranges::equal_to,
 					 projected<_Iter, _Proj>, const _Tp*>
       constexpr _Iter
@@ -412,7 +418,11 @@ namespace ranges
 	return __first;
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_range _Range, typename _Proj = identity, typename _Tp = typename projected<iterator_t<_Range>, _Proj>::value_type>
+#else
     template<input_range _Range, typename _Tp, typename _Proj = identity>
+#endif
       requires indirect_binary_predicate<ranges::equal_to,
 					 projected<iterator_t<_Range>, _Proj>,
 					 const _Tp*>
