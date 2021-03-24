@@ -57,6 +57,11 @@
 
 #pragma GCC system_header
 
+#if __cplusplus >= 201103L
+// Shouldn't go here but in C++2b, but whatever
+#define __cpp_lib_default_template_type_for_algorithm_values 202103L
+#endif
+
 #include <utility> // UK-300.
 #include <bits/stl_algobase.h>
 #include <bits/stl_algo.h>

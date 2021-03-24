@@ -931,7 +931,11 @@ _GLIBCXX_END_NAMESPACE_CONTAINER
    *  types filling contiguous areas of memory, this becomes an inline call
    *  to @c memset or @c wmemset.
   */
-  template<typename _ForwardIterator, typename _Tp>
+  template<typename _ForwardIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline void
     fill(_ForwardIterator __first, _ForwardIterator __last, const _Tp& __value)
@@ -1083,7 +1087,11 @@ _GLIBCXX_END_NAMESPACE_CONTAINER
   // _GLIBCXX_RESOLVE_LIB_DEFECTS
   // DR 865. More algorithms that throw away information
   // DR 426. search_n(), fill_n(), and generate_n() with negative n
-  template<typename _OI, typename _Size, typename _Tp>
+  template<typename _OI, typename _Size, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_OI>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _OI
     fill_n(_OI __first, _Size __n, const _Tp& __value)
@@ -1342,7 +1350,11 @@ _GLIBCXX_END_NAMESPACE_CONTAINER
    *                  @a val.
    *  @ingroup binary_search_algorithms
   */
-  template<typename _ForwardIterator, typename _Tp>
+  template<typename _ForwardIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _ForwardIterator
     lower_bound(_ForwardIterator __first, _ForwardIterator __last,

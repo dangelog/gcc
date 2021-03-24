@@ -31,6 +31,11 @@
 
 #pragma GCC system_header
 
+#if __cplusplus >= 201103L
+// Shouldn't go here but in C++2b, but whatever
+#define __cpp_lib_default_template_type_for_algorithm_values 202103L
+#endif
+
 #if __cplusplus < 201103L
 # include <bits/c++0x_warning.h>
 #else
@@ -69,7 +74,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     erase_if(forward_list<_Tp, _Alloc>& __cont, _Predicate __pred)
     { return __cont.remove_if(__pred); }
 
-  template<typename _Tp, typename _Alloc, typename _Up>
+  template<typename _Tp, typename _Alloc, typename _Up
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = _Tp
+#endif
+           >
     inline typename forward_list<_Tp, _Alloc>::size_type
     erase(forward_list<_Tp, _Alloc>& __cont, const _Up& __value)
     {

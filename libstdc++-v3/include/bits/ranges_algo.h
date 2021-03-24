@@ -235,8 +235,14 @@ namespace ranges
 
   struct __find_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+      template<input_iterator _Iter, sentinel_for<_Iter> _Sent,
+               typename _Proj = identity,
+               typename _Tp = typename projected<_Iter, _Proj>::value_type>
+#else
     template<input_iterator _Iter, sentinel_for<_Iter> _Sent, typename _Tp,
 	     typename _Proj = identity>
+#endif
       requires indirect_binary_predicate<ranges::equal_to,
 					 projected<_Iter, _Proj>, const _Tp*>
       constexpr _Iter
@@ -249,7 +255,11 @@ namespace ranges
 	return __first;
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_range _Range, typename _Proj = identity, typename _Tp = typename projected<iterator_t<_Range>, _Proj>::value_type>
+#else
     template<input_range _Range, typename _Tp, typename _Proj = identity>
+#endif
       requires indirect_binary_predicate<ranges::equal_to,
 					 projected<iterator_t<_Range>, _Proj>,
 					 const _Tp*>
@@ -360,8 +370,13 @@ namespace ranges
 
   struct __count_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_iterator _Iter, sentinel_for<_Iter> _Sent,
+             typename _Proj = identity, typename _Tp = typename projected<_Iter, _Proj>::value_type>
+#else
     template<input_iterator _Iter, sentinel_for<_Iter> _Sent,
 	     typename _Tp, typename _Proj = identity>
+#endif
       requires indirect_binary_predicate<ranges::equal_to,
 					 projected<_Iter, _Proj>,
 					 const _Tp*>
@@ -376,7 +391,11 @@ namespace ranges
 	return __n;
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_range _Range, typename _Proj = identity, class _Tp = typename projected<iterator_t<_Range>, _Proj>::value_type>
+#else
     template<input_range _Range, typename _Tp, typename _Proj = identity>
+#endif
       requires indirect_binary_predicate<ranges::equal_to,
 					 projected<iterator_t<_Range>, _Proj>,
 					 const _Tp*>
@@ -551,8 +570,14 @@ namespace ranges
 
   struct __search_n_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<forward_iterator _Iter, sentinel_for<_Iter> _Sent,
+             typename _Pred = ranges::equal_to, typename _Proj = identity,
+             typename _Tp = typename projected<_Iter, _Proj>::value_type>
+#else
     template<forward_iterator _Iter, sentinel_for<_Iter> _Sent, typename _Tp,
 	     typename _Pred = ranges::equal_to, typename _Proj = identity>
+#endif
       requires indirectly_comparable<_Iter, const _Tp*, _Pred, _Proj>
       constexpr subrange<_Iter>
       operator()(_Iter __first, _Sent __last, iter_difference_t<_Iter> __count,
@@ -623,8 +648,14 @@ namespace ranges
 	  }
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<forward_range _Range,
+             typename _Pred = ranges::equal_to, typename _Proj = identity,
+             typename _Tp = typename projected<iterator_t<_Range>, _Proj>::value_type>
+#else
     template<forward_range _Range, typename _Tp,
 	     typename _Pred = ranges::equal_to, typename _Proj = identity>
+#endif
       requires indirectly_comparable<iterator_t<_Range>, const _Tp*,
 				     _Pred, _Proj>
       constexpr borrowed_subrange_t<_Range>
@@ -1016,8 +1047,15 @@ namespace ranges
 
   struct __replace_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_iterator _Iter, sentinel_for<_Iter> _Sent,
+             typename _Proj = identity,
+             typename _Tp1 = typename projected<_Iter, _Proj>::value_type,
+             typename _Tp2 = _Tp1>
+#else
     template<input_iterator _Iter, sentinel_for<_Iter> _Sent,
 	     typename _Tp1, typename _Tp2, typename _Proj = identity>
+#endif
       requires indirectly_writable<_Iter, const _Tp2&>
 	&& indirect_binary_predicate<ranges::equal_to, projected<_Iter, _Proj>,
 				     const _Tp1*>
@@ -1032,8 +1070,15 @@ namespace ranges
 	return __first;
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_range _Range,
+             typename _Proj = identity,
+             typename _Tp1 = typename projected<iterator_t<_Range>, _Proj>::value_type,
+             typename _Tp2 = _Tp1>
+#else
     template<input_range _Range,
 	     typename _Tp1, typename _Tp2, typename _Proj = identity>
+#endif
       requires indirectly_writable<iterator_t<_Range>, const _Tp2&>
 	&& indirect_binary_predicate<ranges::equal_to,
 				     projected<iterator_t<_Range>, _Proj>,
@@ -1052,9 +1097,16 @@ namespace ranges
 
   struct __replace_if_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_iterator _Iter, sentinel_for<_Iter> _Sent,
+             typename _Proj = identity,
+             typename _Tp = typename projected<_Iter, _Proj>::value_type,
+             indirect_unary_predicate<projected<_Iter, _Proj>> _Pred>
+#else
     template<input_iterator _Iter, sentinel_for<_Iter> _Sent,
 	     typename _Tp, typename _Proj = identity,
 	     indirect_unary_predicate<projected<_Iter, _Proj>> _Pred>
+#endif
       requires indirectly_writable<_Iter, const _Tp&>
       constexpr _Iter
       operator()(_Iter __first, _Sent __last,
@@ -1066,9 +1118,16 @@ namespace ranges
 	return std::move(__first);
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_range _Range, typename _Proj = identity,
+             typename _Tp = typename projected<iterator_t<_Range>, _Proj>::value_type,
+             indirect_unary_predicate<projected<iterator_t<_Range>, _Proj>>
+               _Pred>
+#else
     template<input_range _Range, typename _Tp, typename _Proj = identity,
 	     indirect_unary_predicate<projected<iterator_t<_Range>, _Proj>>
 	       _Pred>
+#endif
       requires indirectly_writable<iterator_t<_Range>, const _Tp&>
       constexpr borrowed_iterator_t<_Range>
       operator()(_Range&& __r,
@@ -1086,12 +1145,24 @@ namespace ranges
 
   struct __replace_copy_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_iterator _Iter, sentinel_for<_Iter> _Sent,
+             typename _Out,
+             typename _Proj = identity,
+             typename _Tp1 = typename projected<_Iter, _Proj>::value_type,
+             typename _Tp2 = iter_value_t<_Out>>
+      requires indirectly_copyable<_Iter, _Out>
+        && indirect_binary_predicate<ranges::equal_to,
+                                     projected<_Iter, _Proj>, const _Tp1*>
+        && output_iterator<_Out, const _Tp2&>
+#else
     template<input_iterator _Iter, sentinel_for<_Iter> _Sent,
 	     typename _Tp1, typename _Tp2, output_iterator<const _Tp2&> _Out,
 	     typename _Proj = identity>
       requires indirectly_copyable<_Iter, _Out>
 	&& indirect_binary_predicate<ranges::equal_to,
 				     projected<_Iter, _Proj>, const _Tp1*>
+#endif
       constexpr replace_copy_result<_Iter, _Out>
       operator()(_Iter __first, _Sent __last, _Out __result,
 		 const _Tp1& __old_value, const _Tp2& __new_value,
@@ -1105,12 +1176,25 @@ namespace ranges
 	return {std::move(__first), std::move(__result)};
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_range _Range,
+             typename _Out,
+             typename _Proj = identity,
+             typename _Tp1 = typename projected<iterator_t<_Range>, _Proj>::value_type,
+             typename _Tp2 = iter_value_t<_Out>>
+      requires indirectly_copyable<iterator_t<_Range>, _Out>
+        && indirect_binary_predicate<ranges::equal_to,
+                                     projected<iterator_t<_Range>, _Proj>,
+                                     const _Tp1*>
+        && output_iterator<_Out, const _Tp2&>
+#else
     template<input_range _Range, typename _Tp1, typename _Tp2,
 	     output_iterator<const _Tp2&> _Out, typename _Proj = identity>
       requires indirectly_copyable<iterator_t<_Range>, _Out>
 	&& indirect_binary_predicate<ranges::equal_to,
 				     projected<iterator_t<_Range>, _Proj>,
 				     const _Tp1*>
+#endif
       constexpr replace_copy_result<borrowed_iterator_t<_Range>, _Out>
       operator()(_Range&& __r, _Out __result,
 		 const _Tp1& __old_value, const _Tp2& __new_value,
@@ -1129,11 +1213,21 @@ namespace ranges
 
   struct __replace_copy_if_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_iterator _Iter, sentinel_for<_Iter> _Sent,
+               typename _Out,
+               typename _Tp = iter_value_t<_Out>,
+               typename _Proj = identity,
+               indirect_unary_predicate<projected<_Iter, _Proj>> _Pred>
+      requires indirectly_copyable<_Iter, _Out> &&
+        output_iterator<_Out, const _Tp&>
+#else
     template<input_iterator _Iter, sentinel_for<_Iter> _Sent,
 	     typename _Tp, output_iterator<const _Tp&> _Out,
 	     typename _Proj = identity,
 	     indirect_unary_predicate<projected<_Iter, _Proj>> _Pred>
       requires indirectly_copyable<_Iter, _Out>
+#endif
       constexpr replace_copy_if_result<_Iter, _Out>
       operator()(_Iter __first, _Sent __last, _Out __result,
 		 _Pred __pred, const _Tp& __new_value, _Proj __proj = {}) const
@@ -1146,12 +1240,23 @@ namespace ranges
 	return {std::move(__first), std::move(__result)};
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_range _Range,
+             typename _Out,
+             typename _Tp = iter_value_t<_Out>,
+             typename _Proj = identity,
+             indirect_unary_predicate<projected<iterator_t<_Range>, _Proj>>
+               _Pred>
+      requires indirectly_copyable<iterator_t<_Range>, _Out>
+        && output_iterator<_Out, const _Tp&>
+#else
     template<input_range _Range,
 	     typename _Tp, output_iterator<const _Tp&> _Out,
 	     typename _Proj = identity,
 	     indirect_unary_predicate<projected<iterator_t<_Range>, _Proj>>
 	       _Pred>
       requires indirectly_copyable<iterator_t<_Range>, _Out>
+#endif
       constexpr replace_copy_if_result<borrowed_iterator_t<_Range>, _Out>
       operator()(_Range&& __r, _Out __result,
 		 _Pred __pred, const _Tp& __new_value, _Proj __proj = {}) const
@@ -1246,8 +1351,13 @@ namespace ranges
 
   struct __remove_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<permutable _Iter, sentinel_for<_Iter> _Sent,
+             typename _Proj = identity, typename _Tp = typename projected<_Iter, _Proj>::value_type>
+#else
     template<permutable _Iter, sentinel_for<_Iter> _Sent,
 	     typename _Tp, typename _Proj = identity>
+#endif
       requires indirect_binary_predicate<ranges::equal_to,
 					 projected<_Iter, _Proj>,
 					 const _Tp*>
@@ -1262,7 +1372,11 @@ namespace ranges
 				 std::move(__pred), std::move(__proj));
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<forward_range _Range, typename _Proj = identity, typename _Tp = typename projected<iterator_t<_Range>, _Proj>::value_type>
+#else
     template<forward_range _Range, typename _Tp, typename _Proj = identity>
+#endif
       requires permutable<iterator_t<_Range>>
 	&& indirect_binary_predicate<ranges::equal_to,
 				     projected<iterator_t<_Range>, _Proj>,
@@ -1321,8 +1435,14 @@ namespace ranges
 
   struct __remove_copy_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_iterator _Iter, sentinel_for<_Iter> _Sent,
+             weakly_incrementable _Out, typename _Proj = identity,
+             typename _Tp = typename projected<_Iter, _Proj>::value_type>
+#else
     template<input_iterator _Iter, sentinel_for<_Iter> _Sent,
 	     weakly_incrementable _Out, typename _Tp, typename _Proj = identity>
+#endif
       requires indirectly_copyable<_Iter, _Out>
 	&& indirect_binary_predicate<ranges::equal_to,
 				     projected<_Iter, _Proj>,
@@ -1340,8 +1460,14 @@ namespace ranges
 	return {std::move(__first), std::move(__result)};
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<input_range _Range, weakly_incrementable _Out,
+             typename _Proj = identity,
+             typename _Tp = typename projected<iterator_t<_Range>, _Proj>::value_type>
+#else
     template<input_range _Range, weakly_incrementable _Out,
 	     typename _Tp, typename _Proj = identity>
+#endif
       requires indirectly_copyable<iterator_t<_Range>, _Out>
 	&& indirect_binary_predicate<ranges::equal_to,
 				     projected<iterator_t<_Range>, _Proj>,
@@ -2285,10 +2411,18 @@ namespace ranges
 
   struct __lower_bound_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<forward_iterator _Iter, sentinel_for<_Iter> _Sent,
+             typename _Proj = identity,
+             typename _Tp = typename projected<_Iter, _Proj>::value_type,
+             indirect_strict_weak_order<const _Tp*, projected<_Iter, _Proj>>
+               _Comp = ranges::less>
+#else
     template<forward_iterator _Iter, sentinel_for<_Iter> _Sent,
 	     typename _Tp, typename _Proj = identity,
 	     indirect_strict_weak_order<const _Tp*, projected<_Iter, _Proj>>
 	       _Comp = ranges::less>
+#endif
       constexpr _Iter
       operator()(_Iter __first, _Sent __last,
 		 const _Tp& __value, _Comp __comp = {}, _Proj __proj = {}) const
@@ -2312,10 +2446,18 @@ namespace ranges
 	return __first;
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<forward_range _Range, typename _Proj = identity,
+             typename _Tp = typename projected<iterator_t<_Range>, _Proj>::value_type,
+             indirect_strict_weak_order<const _Tp*,
+                                        projected<iterator_t<_Range>, _Proj>>
+               _Comp = ranges::less>
+#else
     template<forward_range _Range, typename _Tp, typename _Proj = identity,
 	     indirect_strict_weak_order<const _Tp*,
 					projected<iterator_t<_Range>, _Proj>>
 	       _Comp = ranges::less>
+#endif
       constexpr borrowed_iterator_t<_Range>
       operator()(_Range&& __r,
 		 const _Tp& __value, _Comp __comp = {}, _Proj __proj = {}) const
@@ -2329,10 +2471,18 @@ namespace ranges
 
   struct __upper_bound_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<forward_iterator _Iter, sentinel_for<_Iter> _Sent,
+             typename _Proj = identity,
+             typename _Tp = typename projected<_Iter, _Proj>::value_type,
+             indirect_strict_weak_order<const _Tp*, projected<_Iter, _Proj>>
+               _Comp = ranges::less>
+#else
     template<forward_iterator _Iter, sentinel_for<_Iter> _Sent,
 	     typename _Tp, typename _Proj = identity,
 	     indirect_strict_weak_order<const _Tp*, projected<_Iter, _Proj>>
 	       _Comp = ranges::less>
+#endif
       constexpr _Iter
       operator()(_Iter __first, _Sent __last,
 		 const _Tp& __value, _Comp __comp = {}, _Proj __proj = {}) const
@@ -2356,10 +2506,18 @@ namespace ranges
 	return __first;
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<forward_range _Range, typename _Proj = identity,
+             typename _Tp = typename projected<iterator_t<_Range>, _Proj>::value_type,
+             indirect_strict_weak_order<const _Tp*,
+                                        projected<iterator_t<_Range>, _Proj>>
+               _Comp = ranges::less>
+#else
     template<forward_range _Range, typename _Tp, typename _Proj = identity,
 	     indirect_strict_weak_order<const _Tp*,
 					projected<iterator_t<_Range>, _Proj>>
 	       _Comp = ranges::less>
+#endif
       constexpr borrowed_iterator_t<_Range>
       operator()(_Range&& __r,
 		 const _Tp& __value, _Comp __comp = {}, _Proj __proj = {}) const
@@ -2373,10 +2531,18 @@ namespace ranges
 
   struct __equal_range_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<forward_iterator _Iter, sentinel_for<_Iter> _Sent,
+             typename _Proj = identity,
+             typename _Tp = typename projected<_Iter, _Proj>::value_type,
+             indirect_strict_weak_order<const _Tp*, projected<_Iter, _Proj>>
+               _Comp = ranges::less>
+#else
     template<forward_iterator _Iter, sentinel_for<_Iter> _Sent,
 	     typename _Tp, typename _Proj = identity,
 	     indirect_strict_weak_order<const _Tp*, projected<_Iter, _Proj>>
 	       _Comp = ranges::less>
+#endif
       constexpr subrange<_Iter>
       operator()(_Iter __first, _Sent __last,
 		 const _Tp& __value, _Comp __comp = {}, _Proj __proj = {}) const
@@ -2415,11 +2581,19 @@ namespace ranges
 	return {__first, __first};
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<forward_range _Range, typename _Proj = identity,
+             typename _Tp = typename projected<iterator_t<_Range>, _Proj>::value_type,
+             indirect_strict_weak_order<const _Tp*,
+                                        projected<iterator_t<_Range>, _Proj>>
+               _Comp = ranges::less>
+#else
     template<forward_range _Range,
 	     typename _Tp, typename _Proj = identity,
 	     indirect_strict_weak_order<const _Tp*,
 					projected<iterator_t<_Range>, _Proj>>
 	       _Comp = ranges::less>
+#endif
       constexpr borrowed_subrange_t<_Range>
       operator()(_Range&& __r, const _Tp& __value,
 		 _Comp __comp = {}, _Proj __proj = {}) const
@@ -2433,10 +2607,18 @@ namespace ranges
 
   struct __binary_search_fn
   {
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<forward_iterator _Iter, sentinel_for<_Iter> _Sent,
+             typename _Proj = identity,
+             typename _Tp = typename projected<_Iter, _Proj>::value_type,
+             indirect_strict_weak_order<const _Tp*, projected<_Iter, _Proj>>
+               _Comp = ranges::less>
+#else
     template<forward_iterator _Iter, sentinel_for<_Iter> _Sent,
 	     typename _Tp, typename _Proj = identity,
 	     indirect_strict_weak_order<const _Tp*, projected<_Iter, _Proj>>
 	       _Comp = ranges::less>
+#endif
       constexpr bool
       operator()(_Iter __first, _Sent __last,
 		 const _Tp& __value, _Comp __comp = {}, _Proj __proj = {}) const
@@ -2448,11 +2630,19 @@ namespace ranges
 				    std::__invoke(__proj, *__i));
       }
 
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+    template<forward_range _Range, typename _Proj = identity,
+             typename _Tp = typename projected<iterator_t<_Range>, _Proj>::value_type,
+             indirect_strict_weak_order<const _Tp*,
+                                        projected<iterator_t<_Range>, _Proj>>
+               _Comp = ranges::less>
+#else
     template<forward_range _Range,
 	     typename _Tp, typename _Proj = identity,
 	     indirect_strict_weak_order<const _Tp*,
 					projected<iterator_t<_Range>, _Proj>>
 	       _Comp = ranges::less>
+#endif
       constexpr bool
       operator()(_Range&& __r, const _Tp& __value, _Comp __comp = {},
 		 _Proj __proj = {}) const

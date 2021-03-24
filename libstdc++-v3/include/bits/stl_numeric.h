@@ -82,7 +82,11 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *  @return  Nothing.
    *  @ingroup numeric_ops
    */
-  template<typename _ForwardIterator, typename _Tp>
+  template<typename _ForwardIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_ForwardIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     void
     iota(_ForwardIterator __first, _ForwardIterator __last, _Tp __value)
@@ -128,7 +132,11 @@ _GLIBCXX_BEGIN_NAMESPACE_ALGO
    *  @param  __init  Starting value to add other values to.
    *  @return  The final sum.
    */
-  template<typename _InputIterator, typename _Tp>
+  template<typename _InputIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_InputIterator>::value_type
+#endif
+           >
     _GLIBCXX20_CONSTEXPR
     inline _Tp
     accumulate(_InputIterator __first, _InputIterator __last, _Tp __init)
@@ -155,7 +163,11 @@ _GLIBCXX_BEGIN_NAMESPACE_ALGO
    *  @param  __binary_op  Function object to accumulate with.
    *  @return  The final sum.
    */
-  template<typename _InputIterator, typename _Tp, typename _BinaryOperation>
+  template<typename _InputIterator, typename _Tp
+#ifdef __cpp_lib_default_template_type_for_algorithm_values
+           = typename iterator_traits<_InputIterator>::value_type
+#endif
+           , typename _BinaryOperation>
     _GLIBCXX20_CONSTEXPR
     inline _Tp
     accumulate(_InputIterator __first, _InputIterator __last, _Tp __init,
