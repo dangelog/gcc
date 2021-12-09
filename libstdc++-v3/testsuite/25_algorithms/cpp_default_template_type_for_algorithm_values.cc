@@ -294,6 +294,16 @@ test_vector_erase()
   VERIFY(v[3] == point(3, 3));
 }
 
+void
+test_proxy_iterators()
+{
+  std::vector<bool> v;
+  std::find(v.begin(), v.end(), {});
+  std::ranges::find(v.begin(), v.end(), {});
+  std::ranges::find(v.begin(), v.end(), {true});
+  std::ranges::find(v.begin(), v.end(), {false});
+}
+
 int
 main()
 {
@@ -315,4 +325,6 @@ main()
   test_binary_search();
 
   test_vector_erase();
+
+  test_proxy_iterators();
 }
