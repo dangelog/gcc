@@ -302,6 +302,21 @@ test_proxy_iterators()
   std::ranges::find(v.begin(), v.end(), {});
   std::ranges::find(v.begin(), v.end(), {true});
   std::ranges::find(v.begin(), v.end(), {false});
+  std::ranges::find(v, {});
+  std::ranges::find(v, {true});
+  std::ranges::find(v, {false});
+}
+
+void
+test_projection()
+{
+  std::vector<point> v{ {0, 10}, {1, 11}, {2, 12}, {1, 11}, {2, 12}, {3, 13}, {2, 12} };
+  auto i = std::ranges::find(v, 2, &point::x);
+  VERIFY(i == v.begin() + 2);
+  i = std::ranges::find(v, 13, &point::y);
+  VERIFY(i == v.begin() + 5);
+  i = std::ranges::find(v, -1, &point::x);
+  VERIFY(i == v.end());
 }
 
 int
@@ -327,4 +342,5 @@ main()
   test_vector_erase();
 
   test_proxy_iterators();
+  test_projection();
 }

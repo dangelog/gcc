@@ -3170,11 +3170,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *  output range @p [__result,__result+(__last-__first)) replacing elements
    *  equal to @p __old_value with @p __new_value.
   */
-  template<typename _InputIterator, typename _OutputIterator, typename _Tp
-#ifdef __cpp_lib_default_template_type_for_algorithm_values
-           = typename iterator_traits<_OutputIterator>::value_type
-#endif
-           >
+  template<typename _InputIterator, typename _OutputIterator, typename _Tp>
     _GLIBCXX20_CONSTEXPR
     inline _OutputIterator
     replace_copy(_InputIterator __first, _InputIterator __last,
