@@ -47,6 +47,10 @@
 # include <string_view>
 #endif
 
+#if __cplusplus >= 202002L
+# include <type_traits>
+#endif
+
 #if ! _GLIBCXX_USE_CXX11_ABI
 # include "cow_string.h"
 #else
@@ -1412,6 +1416,38 @@ _GLIBCXX_BEGIN_NAMESPACE_CXX11
 	operator+=(const _Tp& __svt)
 	{ return this->append(__svt); }
 #endif // C++17
+
+#if __cplusplus >= 202002L
+#if defined(STRING_PLUS_STRING_VIEW_AS_HIDDEN_FRIEND)
+      _GLIBCXX20_CONSTEXPR
+      inline friend
+      basic_string operator+(const basic_string& __lhs, __sv_type __rhs)
+        {
+          basic_string __str(__lhs);
+          __str.append(__rhs);
+          return __str;
+        }
+
+      _GLIBCXX20_CONSTEXPR
+      inline friend
+      basic_string operator+(basic_string&& __lhs, __sv_type __rhs)
+      { return std::move(__lhs.append(__rhs)); }
+
+      _GLIBCXX20_CONSTEXPR
+      inline friend
+      basic_string operator+(__sv_type __lhs, const basic_string& __rhs)
+        {
+          basic_string __str(__rhs);
+          __str.insert(0, __lhs);
+          return __str;
+        }
+
+      _GLIBCXX20_CONSTEXPR
+      inline friend
+      basic_string operator+(__sv_type __lhs, basic_string&& __rhs)
+      { return std::move(__rhs.insert(0, __lhs)); }
+#endif // defined(STRING_PLUS_STRING_VIEW_AS_HIDDEN_FRIEND)
+#endif // __cplusplus >= 202002L
 
       /**
        *  @brief  Append a string to this string.
@@ -3695,6 +3731,85 @@ _GLIBCXX_END_NAMESPACE_CXX11
 	      _CharT __rhs)
     { return std::move(__lhs.append(1, __rhs)); }
 #endif
+
+#if __cplusplus >= 202002L
+#if !defined(STRING_PLUS_STRING_VIEW_AS_HIDDEN_FRIEND)
+  // const string & + string_view
+  template<typename _CharT, typename _Traits, typename _Alloc>
+    _GLIBCXX20_CONSTEXPR
+    inline basic_string<_CharT, _Traits, _Alloc>
+    operator+(const basic_string<_CharT, _Traits, _Alloc>& __lhs, basic_string_view<_CharT, _Traits> __rhs)
+      {
+        basic_string<_CharT, _Traits, _Alloc> __str(__lhs);
+        __str.append(__rhs);
+        return __str;
+      }
+
+  template<typename _CharT, typename _Traits, typename _Alloc>
+    _GLIBCXX20_CONSTEXPR
+    inline basic_string<_CharT, _Traits, _Alloc>
+    operator+(const basic_string<_CharT, _Traits, _Alloc>& __lhs, type_identity_t<basic_string_view<_CharT, _Traits>> __rhs)
+      {
+        basic_string<_CharT, _Traits, _Alloc> __str(__lhs);
+        __str.append(__rhs);
+        return __str;
+      }
+
+  // string && + string_view
+  template<typename _CharT, typename _Traits, typename _Alloc>
+    _GLIBCXX20_CONSTEXPR
+    inline basic_string<_CharT, _Traits, _Alloc>
+    operator+(basic_string<_CharT, _Traits, _Alloc>&& __lhs, basic_string_view<_CharT, _Traits> __rhs)
+      {
+        return std::move(__lhs.append(__rhs));
+      }
+  template<typename _CharT, typename _Traits, typename _Alloc>
+    _GLIBCXX20_CONSTEXPR
+    inline basic_string<_CharT, _Traits, _Alloc>
+    operator+(basic_string<_CharT, _Traits, _Alloc>&& __lhs, type_identity_t<basic_string_view<_CharT, _Traits>> __rhs)
+      {
+        return std::move(__lhs.append(__rhs));
+      }
+
+  // string_view + const string &
+  template<typename _CharT, typename _Traits, typename _Alloc>
+    _GLIBCXX20_CONSTEXPR
+    inline basic_string<_CharT, _Traits, _Alloc>
+    operator+(basic_string_view<_CharT, _Traits> __lhs, const basic_string<_CharT, _Traits, _Alloc>& __rhs)
+      {
+        basic_string<_CharT, _Traits, _Alloc> __str(__rhs);
+        __str.insert(0, __lhs);
+        return __str;
+      }
+
+  template<typename _CharT, typename _Traits, typename _Alloc>
+    _GLIBCXX20_CONSTEXPR
+    inline basic_string<_CharT, _Traits, _Alloc>
+    operator+(type_identity_t<basic_string_view<_CharT, _Traits>> __lhs, const basic_string<_CharT, _Traits, _Alloc>& __rhs)
+      {
+        basic_string<_CharT, _Traits, _Alloc> __str(__rhs);
+        __str.insert(0, __lhs);
+        return __str;
+      }
+
+  // string_view + string &&
+  template<typename _CharT, typename _Traits, typename _Alloc>
+    _GLIBCXX20_CONSTEXPR
+    inline basic_string<_CharT, _Traits, _Alloc>
+    operator+(basic_string_view<_CharT, _Traits> __lhs, basic_string<_CharT, _Traits, _Alloc>&& __rhs)
+      {
+        return std::move(__rhs.insert(0, __lhs));
+      }
+
+   template<typename _CharT, typename _Traits, typename _Alloc>
+    _GLIBCXX20_CONSTEXPR
+    inline basic_string<_CharT, _Traits, _Alloc>
+    operator+(type_identity_t<basic_string_view<_CharT, _Traits>> __lhs, basic_string<_CharT, _Traits, _Alloc>&& __rhs)
+      {
+        return std::move(__rhs.insert(0, __lhs));
+      }
+#endif // !defined(STRING_PLUS_STRING_VIEW_AS_HIDDEN_FRIEND)
+#endif // __cplusplus >= 202002L
 
   // operator ==
   /**
