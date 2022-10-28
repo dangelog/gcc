@@ -184,6 +184,7 @@ inline namespace fundamentals_v2
 	return get();
       }
 
+#if 0
       template <typename _Up = _Tp,
 		typename enable_if<__or_<is_pointer<_Up>,
 					 is_convertible<_Up,
@@ -193,6 +194,16 @@ inline namespace fundamentals_v2
       {
 	return get();
       }
+#else
+      template <typename _Up,
+                typename enable_if<
+                    is_convertible<_Tp, const _Up *>::value,
+                    bool>::type = true>
+      constexpr operator const _Up*() const
+      {
+          return get();
+      }
+#endif
 
       constexpr const element_type& operator*() const
       {
@@ -210,6 +221,7 @@ inline namespace fundamentals_v2
 	return get();
       }
 
+#if 0
       template <typename _Up = _Tp,
 		typename enable_if<__or_<is_pointer<_Up>,
 					 is_convertible<_Up,
@@ -219,6 +231,16 @@ inline namespace fundamentals_v2
       {
 	return get();
       }
+#else
+      template <typename _Up,
+                typename enable_if<
+                    is_convertible<_Tp, _Up *>::value,
+                    bool>::type = true>
+      constexpr operator _Up*()
+      {
+          return get();
+      }
+#endif
 
       constexpr element_type& operator*()
       {

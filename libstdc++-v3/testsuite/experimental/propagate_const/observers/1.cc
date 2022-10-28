@@ -62,4 +62,31 @@ int main()
   const propagate_const<X3*> xx10{&xx8};
   VERIFY(xx9->f() == 42);
   VERIFY(xx10->f() == 666);
+
+  struct Base {};
+  struct Derived : Base {};
+  Derived d;
+  propagate_const<Derived*> xx_derived1{&d};
+  Derived* d_ptr1 = xx_derived1;
+  Base* b_ptr1 = xx_derived1;
+  VERIFY(d_ptr1 == &d);
+  VERIFY(b_ptr1 == &d);
+
+  const propagate_const<Derived*> xx_derived2{&d};
+  const Derived* d_ptr2 = xx_derived2;
+  const Base* b_ptr2 = xx_derived2;
+  VERIFY(d_ptr2 == &d);
+  VERIFY(b_ptr2 == &d);
+
+  auto f = [](const Base *){ return 42; };
+  VERIFY(f(xx_derived1) == 42);
+  VERIFY(f(xx_derived2) == 42);
+
+  struct Overload {
+    int f(const Base *) { return 666; }
+    int f(const Derived *) { return 42; }
+  } overload;
+
+  VERIFY(overload.f(xx_derived1.get()) == 42);
+  VERIFY(overload.f(xx_derived2.get()) == 42);
 }
