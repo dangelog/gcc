@@ -149,6 +149,47 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 #endif // smart_ptr_for_overwrite
 #endif // shared_ptr_arrays
 
+  namespace __detail
+  {
+  namespace __shared_ptr
+  {
+    template<typename _Tp>
+    static inline std::true_type __is_shared_ptr_impl(const shared_ptr<_Tp>&);
+    static inline std::false_type __is_shared_ptr_impl(...);
+
+    template<typename _Tp>
+    using __is_shared_ptr = decltype(__is_shared_ptr_impl(declval<_Tp>()));
+    template<typename _Tp>
+    _GLIBCXX17_INLINE constexpr bool __is_shared_ptr_v = __is_shared_ptr<_Tp>::value;
+
+    class __shared_ptr_mixed_comparison_base
+    {
+#ifdef __cpp_lib_mixed_smart_pointer_comparisons
+      /// Heterogeneous comparison operators for shared_ptr
+      template<typename _Vp, typename _Up>
+        requires
+          (__is_shared_ptr_v<_Vp> &&
+           equality_comparable_with<typename _Vp::element_type*, const _Up*>)
+        _GLIBCXX_NODISCARD friend inline bool
+        operator==(const _Vp& __a, const _Up* __b)
+        { return __a.get() == __b; }
+
+#ifdef __cpp_lib_three_way_comparison
+        template<typename _Vp, typename _Up>
+          requires
+           (__is_shared_ptr_v<_Vp> &&
+            three_way_comparable_with<typename _Vp::element_type*, const _Up*>)
+        _GLIBCXX_NODISCARD friend inline
+        compare_three_way_result_t<typename _Vp::element_type*, const _Up*>
+          operator<=>(const _Vp& __a,
+                      const _Up* __b)
+          { return compare_three_way()(__a.get(), __b); }
+#endif // __cpp_lib_three_way_comparison
+#endif // __cpp_lib_mixed_smart_pointer_comparisons
+    };
+  }  // namespace __detail
+  }  // namespace __shared_ptr
+
   /// @endcond
 
   /**
@@ -172,7 +213,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    * pointer see `std::shared_ptr::owner_before` and `std::owner_less`.
   */
   template<typename _Tp>
-    class shared_ptr : public __shared_ptr<_Tp>
+    class shared_ptr : public __shared_ptr<_Tp>, __detail::__shared_ptr::__shared_ptr_mixed_comparison_base
     {
       template<typename... _Args>
 	using _Constructible = typename enable_if<

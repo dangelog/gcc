@@ -43,6 +43,11 @@
 # endif
 #endif
 
+#if __cpp_impl_three_way_comparison >= 201907L && __cpp_lib_concepts
+# define __cpp_lib_mixed_smart_pointer_comparisons 202402L
+# include <concepts>
+#endif
+
 /* Duplicate definition with ptr_traits.h.  */
 #if __cplusplus > 202002L && defined(__cpp_constexpr_dynamic_alloc)
 # define __cpp_lib_constexpr_memory 202202L
@@ -268,13 +273,58 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     };
   /// @endcond
 
+  template <typename _Tp, typename _Dp> class unique_ptr;
+  namespace __detail
+  {
+  namespace __unique_ptr
+  {
+    template<typename _Tp, typename _Del>
+    static inline true_type __is_unique_ptr_impl(const unique_ptr<_Tp, _Del>&);
+    static inline false_type __is_unique_ptr_impl(...);
+
+    template<typename _Tp>
+    using __is_unique_ptr = decltype(__is_unique_ptr_impl(declval<_Tp>()));
+    template<typename _Tp>
+    _GLIBCXX17_INLINE constexpr bool __is_unique_ptr_v = __is_unique_ptr<_Tp>::value;
+
+    class __unique_ptr_mixed_comparison_base
+    {
+#ifdef __cpp_lib_mixed_smart_pointer_comparisons
+      /// Heterogeneous comparison operators for unique_ptr
+      template<typename _Vp, typename _Up>
+        requires
+          (__is_unique_ptr_v<_Vp> &&
+           is_pointer_v<typename _Vp::pointer> &&
+           equality_comparable_with<typename _Vp::pointer, const _Up *>)
+        _GLIBCXX_NODISCARD friend inline bool
+        operator==(const _Vp& __x,
+                   const _Up* __y)
+        { return __x.get() == __y; }
+#ifdef __cpp_lib_three_way_comparison
+      template<typename _Vp, typename _Up>
+        requires
+          (__is_unique_ptr_v<_Vp> &&
+           is_pointer_v<typename _Vp::pointer> &&
+           three_way_comparable_with<typename _Vp::pointer, const _Up*>)
+        _GLIBCXX_NODISCARD friend inline
+        compare_three_way_result_t<typename _Vp::pointer, const _Up*>
+        operator<=>(const _Vp& __x,
+                    const _Up* __y)
+        { return compare_three_way()(__x.get(), __y); }
+#endif
+#endif
+    };
+  }  // namespace __detail
+  }  // namespace __unique_ptr
+
+
   // 20.7.1.2 unique_ptr for single objects.
 
   /// A move-only smart pointer that manages unique ownership of a resource.
   /// @headerfile memory
   /// @since C++11
   template <typename _Tp, typename _Dp = default_delete<_Tp>>
-    class unique_ptr
+    class unique_ptr : __detail::__unique_ptr::__unique_ptr_mixed_comparison_base
     {
       template <typename _Up>
 	using _DeleterConstraint =
@@ -532,7 +582,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
   /// @headerfile memory
   /// @since C++11
   template<typename _Tp, typename _Dp>
-    class unique_ptr<_Tp[], _Dp>
+    class unique_ptr<_Tp[], _Dp> : __detail::__unique_ptr::__unique_ptr_mixed_comparison_base
     {
       template <typename _Up>
       using _DeleterConstraint =

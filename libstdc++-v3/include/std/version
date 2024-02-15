@@ -241,6 +241,7 @@
 #define __cpp_lib_ssize 201902L
 #if __cpp_impl_three_way_comparison >= 201907L && __cpp_lib_concepts
 # define __cpp_lib_three_way_comparison 201907L
+# define __cpp_lib_mixed_smart_pointer_comparisons 202402L
 #endif
 #define __cpp_lib_to_address 201711L
 #define __cpp_lib_to_array 201907L
